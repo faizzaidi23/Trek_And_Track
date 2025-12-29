@@ -197,7 +197,7 @@ private fun PaymentHistoryCard(
                             text = payment.toParticipant,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 15.sp
+                            fontSize = 14.sp
                         )
                     }
 
@@ -205,7 +205,7 @@ private fun PaymentHistoryCard(
                     val dateTimeText = formatPaymentDateTime(payment.timestamp)
                     Text(
                         text = dateTimeText,
-                        fontSize = 13.sp,
+                        fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
                 }
