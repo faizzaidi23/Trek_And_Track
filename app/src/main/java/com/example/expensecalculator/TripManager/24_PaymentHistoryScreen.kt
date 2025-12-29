@@ -220,7 +220,7 @@ private fun PaymentHistoryCard(
                     )
                     Text(
                         text = "Paid",
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                         fontWeight = FontWeight.Medium
                     )
@@ -233,9 +233,9 @@ private fun PaymentHistoryCard(
                 enter = expandVertically() + fadeIn(),
                 exit = shrinkVertically() + fadeOut()
             ) {
-                Column(modifier = Modifier.padding(top = 15.dp)) {
+                Column(modifier = Modifier.padding(top = 14.dp)) {
                     HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 8.dp),
+                        modifier = Modifier.padding(vertical = 7.dp),
                         color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
                     )
 
