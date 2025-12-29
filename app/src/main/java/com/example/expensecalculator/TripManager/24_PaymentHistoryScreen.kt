@@ -315,7 +315,7 @@ private fun PaymentHistorySummaryCard(
             Column {
                 Text(
                     "Total Payments Made",
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
                 Text(
@@ -327,7 +327,7 @@ private fun PaymentHistorySummaryCard(
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     "Total Amount Paid",
-                    fontSize = 12.sp,
+                    fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
                 Text(
