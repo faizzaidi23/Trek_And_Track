@@ -246,7 +246,7 @@ private fun PaymentHistoryCard(
                     PaymentDetailRow(label = "Date", value = payment.date)
                     PaymentDetailRow(label = "Time", value = formatTime(payment.timestamp))
 
-                    Spacer(modifier = Modifier.height(7.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     // Delete Button
                     Button(
@@ -256,7 +256,7 @@ private fun PaymentHistoryCard(
                             containerColor = MaterialTheme.colorScheme.errorContainer,
                             contentColor = MaterialTheme.colorScheme.onErrorContainer
                         ),
-                        shape = RoundedCornerShape(9.dp)
+                        shape = RoundedCornerShape(8.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
