@@ -442,7 +442,7 @@ private fun IndividualBalanceItem(name: String, balance: Double, currencySymbol:
                 color = MaterialTheme.colorScheme.primary
             )
         }
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(17.dp))
         Text(
             text = name,
             modifier = Modifier.weight(1f),
@@ -460,7 +460,7 @@ private fun IndividualBalanceItem(name: String, balance: Double, currencySymbol:
             text = displayText,
             fontWeight = if (abs(balance) > 0.01) FontWeight.SemiBold else FontWeight.Normal,
             color = textColor,
-            fontSize = 14.sp
+            fontSize = 13.sp
         )
     }
 }
