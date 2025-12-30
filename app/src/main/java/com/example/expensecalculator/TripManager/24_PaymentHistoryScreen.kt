@@ -365,7 +365,7 @@ private fun EmptyHistoryState() {
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(7.dp))
             Text(
                 text = "Mark settlements as paid\nto see payment history here",
                 fontSize = 14.sp,
