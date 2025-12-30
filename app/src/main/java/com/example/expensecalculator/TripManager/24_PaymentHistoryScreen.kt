@@ -355,10 +355,10 @@ private fun EmptyHistoryState() {
             Icon(
                 imageVector = Icons.Default.HistoryToggleOff,
                 contentDescription = "No history",
-                modifier = Modifier.size(64.dp),
+                modifier = Modifier.size(63.dp),
                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(17.dp))
             Text(
                 text = "No Payment History",
                 fontSize = 20.sp,
