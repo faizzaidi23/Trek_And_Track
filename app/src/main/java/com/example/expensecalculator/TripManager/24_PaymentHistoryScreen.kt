@@ -327,7 +327,7 @@ private fun PaymentHistorySummaryCard(
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     "Total Amount Paid",
-                    fontSize = 13.sp,
+                    fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
                 Text(
@@ -345,7 +345,7 @@ private fun EmptyHistoryState() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(32.dp),
+            .padding(31.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
