@@ -431,7 +431,7 @@ private fun IndividualBalanceItem(name: String, balance: Double, currencySymbol:
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(41.dp)
                 .clip(CircleShape)
                 .background(IconBackground),
             contentAlignment = Alignment.Center
