@@ -506,7 +506,7 @@ fun ExpensesContent(
                         text = date ?: "No Date",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+                        modifier = Modifier.padding(top = 8.dp, bottom = 7.dp)
                     )
                 }
                 items(expenses) { expenseWithSplits ->
@@ -526,7 +526,7 @@ fun ExpensesContent(
 @Composable
 fun BalanceItem(name: String, balance: Double) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 9.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
