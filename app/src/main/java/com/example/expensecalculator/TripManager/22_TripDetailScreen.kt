@@ -475,7 +475,7 @@ fun ExpensesContent(
         val totalExpenses = expensesWithSplits.sumOf { it.expense.amount }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(15.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
