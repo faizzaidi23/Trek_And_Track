@@ -362,7 +362,7 @@ fun TripDetailScreen(
             // Custom FAB - only show for Expenses, Categories, and Photos tabs
             if (selectedTabIndex == 0 || selectedTabIndex == 1 || selectedTabIndex == 3) {
                 Column(
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp),
+                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 22.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     FloatingActionButton(
@@ -386,7 +386,7 @@ fun TripDetailScreen(
                             tint = Color.White
                         )
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(5.dp))
                     Text(
                         when (selectedTabIndex) {
                             0 -> "Add Expense"
