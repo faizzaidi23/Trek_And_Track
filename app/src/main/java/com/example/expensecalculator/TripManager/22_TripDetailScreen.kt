@@ -610,7 +610,7 @@ fun ExpenseCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(15.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
@@ -623,7 +623,7 @@ fun ExpenseCard(
                     Icons.AutoMirrored.Filled.ReceiptLong,
                     "Expense Icon",
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(39.dp)
                         .clip(CircleShape)
                         .background(IconBackground)
                         .padding(8.dp),
