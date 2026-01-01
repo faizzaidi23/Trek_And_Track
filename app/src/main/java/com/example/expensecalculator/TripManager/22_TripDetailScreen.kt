@@ -539,7 +539,7 @@ fun BalanceItem(name: String, balance: Double) {
                 color = MaterialTheme.colorScheme.primary
             )
         }
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(15.dp))
         Text(
             name,
             modifier = Modifier.weight(1f),
@@ -572,7 +572,7 @@ private fun TripDetailEmptyState(icon: ImageVector, title: String, subtitle: Str
             Icon(
                 imageVector = icon,
                 contentDescription = title,
-                modifier = Modifier.size(56.dp),
+                modifier = Modifier.size(55.dp),
                 tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
             Spacer(modifier = Modifier.height(16.dp))
