@@ -626,10 +626,10 @@ fun ExpenseCard(
                         .size(39.dp)
                         .clip(CircleShape)
                         .background(IconBackground)
-                        .padding(8.dp),
+                        .padding(7.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(15.dp))
                 Column {
                     Text(
                         expense.expenseName,
