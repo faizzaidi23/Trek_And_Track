@@ -642,7 +642,7 @@ fun ExpenseCard(
                         fontSize = 12.sp
                     )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(7.dp))
                 Text(
                     text = "$currencySymbol${"%,.0f".format(expense.amount)}",
                     fontWeight = FontWeight.Bold,
