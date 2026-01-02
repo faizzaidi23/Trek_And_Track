@@ -233,7 +233,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel) {
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp),
+                            .padding(bottom = 14.dp),
                         style = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
                     )
                 }
