@@ -179,7 +179,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel) {
                             }
                         }
                     )
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(33.dp))
 
                     // Register Button
                     Button(
@@ -201,7 +201,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel) {
                     ) {
                         if (viewModel.isLoading) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
+                                modifier = Modifier.size(25.dp),
                                 color = Color.White
                             )
                         } else {
