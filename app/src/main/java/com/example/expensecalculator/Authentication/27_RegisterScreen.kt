@@ -97,12 +97,12 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel) {
                     .fillMaxWidth()
                     .weight(1f), // Takes remaining space
                 color = WhiteCard,
-                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+                shape = RoundedCornerShape(topStart = 33.dp, topEnd = 32.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 32.dp, vertical = 40.dp),
+                        .padding(horizontal = 31.dp, vertical = 49.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     // Email Text Field
