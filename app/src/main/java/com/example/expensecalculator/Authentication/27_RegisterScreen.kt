@@ -205,7 +205,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel) {
                                 color = Color.White
                             )
                         } else {
-                            Text("Create Account", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("Create Account", fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
 
