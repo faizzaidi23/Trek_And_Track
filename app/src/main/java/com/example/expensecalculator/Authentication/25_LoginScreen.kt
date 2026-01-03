@@ -241,7 +241,7 @@ fun LoginScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(55.dp),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(11.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = PrimaryBlue,
                             contentColor = Color.White
@@ -253,7 +253,7 @@ fun LoginScreen(
                                 color = Color.White
                             )
                         } else {
-                            Text("Log In", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("Log In", fontSize = 15.sp, fontWeight = FontWeight.Bold)
                         }
                     }
 
