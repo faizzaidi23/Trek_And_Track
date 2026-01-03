@@ -281,7 +281,7 @@ fun LoginScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp), // Adjust padding for nav bar
+                            .padding(bottom = 15.dp), // Adjust padding for nav bar
                         style = LocalTextStyle.current.copy(textAlign = TextAlign.Center)
                     )
                 }
