@@ -222,10 +222,10 @@ fun LoginScreen(
                                 onCheckedChange = { rememberMeChecked = it },
                                 colors = CheckboxDefaults.colors(checkedColor = PrimaryBlue)
                             )
-                            Text("Remember me", color = DarkGreyText, fontSize = 14.sp)
+                            Text("Remember me", color = DarkGreyText, fontSize = 15.sp)
                         }
                         TextButton(onClick = { /* Handle Forgot Password */ }) {
-                            Text("Forgot Password?", color = PrimaryBlue, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                            Text("Forgot Password?", color = PrimaryBlue, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
 
