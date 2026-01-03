@@ -225,11 +225,11 @@ fun LoginScreen(
                             Text("Remember me", color = DarkGreyText, fontSize = 15.sp)
                         }
                         TextButton(onClick = { /* Handle Forgot Password */ }) {
-                            Text("Forgot Password?", color = PrimaryBlue, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                            Text("Forgot Password?", color = PrimaryBlue, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(25.dp))
 
                     Button(
                         onClick = {
