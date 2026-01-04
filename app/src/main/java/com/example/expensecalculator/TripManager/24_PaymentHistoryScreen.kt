@@ -288,7 +288,7 @@ private fun PaymentDetailRow(label: String, value: String) {
         )
         Text(
             text = value,
-            fontSize = 14.sp,
+            fontSize = 13.sp,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.SemiBold
         )
@@ -345,7 +345,7 @@ private fun EmptyHistoryState() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(31.dp),
+            .padding(32.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
