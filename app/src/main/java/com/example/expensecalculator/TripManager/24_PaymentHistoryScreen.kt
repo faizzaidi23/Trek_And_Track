@@ -361,11 +361,11 @@ private fun EmptyHistoryState() {
             Spacer(modifier = Modifier.height(17.dp))
             Text(
                 text = "No Payment History",
-                fontSize = 20.sp,
+                fontSize = 21.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(modifier = Modifier.height(7.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Mark settlements as paid\nto see payment history here",
                 fontSize = 14.sp,
