@@ -172,7 +172,7 @@ fun FeatureCard(
                 )
             }
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1.01f),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
