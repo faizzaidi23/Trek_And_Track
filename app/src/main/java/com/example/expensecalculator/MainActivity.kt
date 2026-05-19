@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.expensecalculator.Authentication.AuthNavigator
 import com.example.expensecalculator.Data.ExpenseDatabase
 import com.example.expensecalculator.ExpenseRepository
 import com.example.expensecalculator.ExpenseViewModel
@@ -18,8 +19,7 @@ import com.example.expensecalculator.TripManager.TripRepository
 import com.example.expensecalculator.TripManager.TripViewModel
 import com.example.expensecalculator.TripManager.TripViewModelFactory
 import com.example.expensecalculator.ui.theme.ExpenseCalculatorTheme
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
     private lateinit var themePreferences: ThemePreferences
@@ -46,18 +46,22 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val isDarkMode by themePreferences.isDarkModeEnabled.collectAsState(initial = false)
+            var isLoggedIn by remember { mutableStateOf(FirebaseAuth.getInstance().currentUser != null) }
 
             ExpenseCalculatorTheme(darkTheme = isDarkMode) {
-                val expenseViewModel: ExpenseViewModel = viewModel(factory = expenseViewModelFactory)
-                val tripViewModel: TripViewModel = viewModel(factory = tripViewModelFactory)
-                val navController = rememberNavController()
-
-                NavGraph(
-                    navController = navController,
-                    expenseViewModel = expenseViewModel,
-                    tripViewModel = tripViewModel,
-                    themePreferences = themePreferences
-                )
+                if (isLoggedIn) {
+                    val expenseViewModel: ExpenseViewModel = viewModel(factory = expenseViewModelFactory)
+                    val tripViewModel: TripViewModel = viewModel(factory = tripViewModelFactory)
+                    val navController = rememberNavController()
+                    NavGraph(
+                        navController = navController,
+                        expenseViewModel = expenseViewModel,
+                        tripViewModel = tripViewModel,
+                        themePreferences = themePreferences
+                    )
+                } else {
+                    AuthNavigator(onLoginSuccess = { isLoggedIn = true })
+                }
             }
         }
     }

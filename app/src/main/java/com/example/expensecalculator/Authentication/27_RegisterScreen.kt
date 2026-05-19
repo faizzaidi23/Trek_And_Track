@@ -1,5 +1,6 @@
 package com.example.expensecalculator.Authentication
 
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,7 +31,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.expensecalculator.ui.theme.*
 import com.faiz.trekandtrack.R
+
+// Aliases for legacy color names referenced in this file.
+// These map older symbol names to the canonical colors defined in ui.theme.Color.kt
+private val DarkBlueBackground = DarkScreenBackground
+private val WhiteCard = CardBackground
+private val DarkGreyText = PrimaryText
+private val HintGray = SecondaryText
 
 
 @Composable
@@ -185,9 +194,10 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel) {
                     Button(
                         onClick = {
                             // TODO: Add validation -> if (viewModel.password == confirmPassword)
-                            viewModel.register(context) {
-                                navController.popBackStack()
-                            }
+                            viewModel.register(
+                                onSuccess = { navController.popBackStack() },
+                                onError = { Toast.makeText(context, it, Toast.LENGTH_LONG).show() }
+                            )
                         },
                         enabled = !viewModel.isLoading,
                         modifier = Modifier

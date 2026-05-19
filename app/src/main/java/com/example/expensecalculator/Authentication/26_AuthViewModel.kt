@@ -1,66 +1,106 @@
 package com.example.expensecalculator.Authentication
 
 import android.content.Context
-import android.widget.Toast
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.expensecalculator.Connection.AuthRequest
-import com.example.expensecalculator.Connection.RetrofitClient
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.coroutines.launch
-
+import kotlinx.coroutines.tasks.await
 
 class AuthViewModel : ViewModel() {
-    var email by mutableStateOf<String>("")
+    var email by mutableStateOf("")
     var password by mutableStateOf("")
     var isLoading by mutableStateOf(false)
         private set
     var errorMessage by mutableStateOf<String?>(null)
+        private set
 
-    fun onEmailChange(newEmail: String) {
-        email = newEmail
-    }
+    private val auth = FirebaseAuth.getInstance()
 
-    fun onPasswordChange(newPassword: String) {
-        password = newPassword
-    }
+    val isLoggedIn get() = auth.currentUser != null
 
-    fun register(context: Context, onRegistrationSuccess: () -> Unit) {
+    fun onEmailChange(v: String) { email = v }
+    fun onPasswordChange(v: String) { password = v }
+
+    fun login(onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             isLoading = true
             errorMessage = null
             try {
-                val request = AuthRequest(email, password)
-                RetrofitClient.instance.register(request)
-                Toast.makeText(context, "Registration Successful!", Toast.LENGTH_SHORT).show()
-                onRegistrationSuccess()
+                auth.signInWithEmailAndPassword(email, password).await()
+                onSuccess()
             } catch (e: Exception) {
-                errorMessage = "Registration failed: ${e.message}"
-                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                val msg = "Login failed: ${e.message}"
+                errorMessage = msg
+                onError(msg)
             } finally {
                 isLoading = false
             }
         }
     }
 
-    fun login(context: Context, onLoginSuccess: () -> Unit) {
+    fun register(onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             isLoading = true
             errorMessage = null
             try {
-                val request = AuthRequest(email, password)
-                val response = RetrofitClient.instance.login(request)
-                // TODO: Securely save the response.token
-                Toast.makeText(context, "Login Successful!", Toast.LENGTH_SHORT).show()
-                onLoginSuccess()
+                auth.createUserWithEmailAndPassword(email, password).await()
+                onSuccess()
             } catch (e: Exception) {
-                errorMessage = "Login failed: Invalid credentials."
-                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                val msg = "Registration failed: ${e.message}"
+                errorMessage = msg
+                onError(msg)
             } finally {
                 isLoading = false
             }
         }
     }
+
+    fun forgotPassword(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                auth.sendPasswordResetEmail(email).await()
+                onSuccess()
+            } catch (e: Exception) {
+                onError("Failed: ${e.message}")
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun signInWithGoogle(idToken: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                val credential = GoogleAuthProvider.getCredential(idToken, null)
+                auth.signInWithCredential(credential).await()
+                onSuccess()
+            } catch (e: Exception) {
+                onError("Google sign-in failed: ${e.message}")
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun logout() {
+        auth.signOut()
+    }
+
+    fun getGoogleSignInClient(context: Context) =
+        GoogleSignIn.getClient(
+            context,
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("1087169199906-elmu6f6qdlut9lnbs5dl22j25h2fifj3.apps.googleusercontent.com") // from google-services.json
+                .requestEmail()
+                .build()
+        )
 }

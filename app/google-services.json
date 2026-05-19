@@ -12,7 +12,20 @@
           "package_name": "com.faiz.trekandtrack"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1087169199906-eqnfmj12osd6akpjjk4q4nbag9h2rp5i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.faiz.trekandtrack",
+            "certificate_hash": "e4ecfe5181f803b7714a065b3183dba3752d2cd1"
+          }
+        },
+        {
+          "client_id": "1087169199906-elmu6f6qdlut9lnbs5dl22j25h2fifj3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAuhmDISlpRVOq1ATCMuz9M7oI97h6Ddwc"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1087169199906-elmu6f6qdlut9lnbs5dl22j25h2fifj3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
