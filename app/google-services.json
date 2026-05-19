@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1087169199906",
+    "project_id": "trekandtrack-c4e71",
+    "storage_bucket": "trekandtrack-c4e71.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087169199906:android:d91ac18443e1eaabceef7b",
+        "android_client_info": {
+          "package_name": "com.faiz.trekandtrack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuhmDISlpRVOq1ATCMuz9M7oI97h6Ddwc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

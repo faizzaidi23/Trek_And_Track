@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.google.ksp)
     // add the kotlinx serialization plugin to handle the json data
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.21"
+
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -101,4 +104,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
+    // Firebase BOM - manages all Firebase versions
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
+// Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 }
