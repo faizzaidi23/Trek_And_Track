@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.expensecalculator.tripData.ExpenseSplit // --- 1. ADD: Import for the new entity
 import com.example.expensecalculator.tripData.Trip
 import com.example.expensecalculator.tripData.TripDao
@@ -28,7 +30,7 @@ import java.util.Date
         SettlementPayment::class,
         ExpenseCategory::class // Add ExpenseCategory entity
     ],
-    version = 16, // Increment version to 16 to handle nullable color field
+    version = 17,
     exportSchema = false
 )
 abstract class ExpenseDatabase : RoomDatabase() {
@@ -47,11 +49,20 @@ abstract class ExpenseDatabase : RoomDatabase() {
                     context.applicationContext,
                     ExpenseDatabase::class.java,
                     "expense_db"
-                ).fallbackToDestructiveMigration().build()
+                )
+                .addMigrations(MIGRATION_16_17)
+                .build()
                 INSTANCE = instance
                 instance
             }
         }
+    }
+}
+
+val MIGRATION_16_17 = object : Migration(16, 17) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE trips ADD COLUMN firestoreId TEXT")
+        database.execSQL("ALTER TABLE trips ADD COLUMN createdBy TEXT")
     }
 }
 

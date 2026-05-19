@@ -15,7 +15,9 @@ data class Trip(
     val days: Int? = null,
     val expenditure: Double? = null,
     val tripIconUri: String? = null,
-    val currency: String = "INR" // Base currency for the trip (ISO code)
+    val currency: String = "INR", // Base currency for the trip (ISO code)
+    val firestoreId:String?=null,
+    val createdBy:String?=null
 )
 
 @Entity(
