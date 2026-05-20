@@ -13,8 +13,8 @@ interface TripDao {
     suspend fun updateTrip(trip: Trip)
     @Delete
     suspend fun deleteTrip(trip: Trip)
-    @Query("SELECT * FROM trips ORDER BY id DESC")
-    fun showAllTrips(): Flow<List<Trip>>
+    @Query("SELECT * FROM trips WHERE createdBy = :userId ORDER BY id DESC")
+    fun showAllTrips(userId: String): Flow<List<Trip>>
 
     @Insert
     suspend fun addParticipants(participants: List<TripParticipant>)
@@ -139,4 +139,11 @@ interface TripDao {
         )
         defaultCategories.forEach { addCategory(it) }
     }
+
+
+
+    //adding updateFirestoreId
+
+    @Query("UPDATE trips SET firestoreId = :firestoreId  WHERE id=:tripId")
+    suspend fun updateFirestoreId(tripId:Int, firestoreId: String)
 }

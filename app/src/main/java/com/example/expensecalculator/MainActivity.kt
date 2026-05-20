@@ -1,6 +1,5 @@
 package com.faiz.trekandtrack
 
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,33 +24,47 @@ class MainActivity : ComponentActivity() {
     private lateinit var themePreferences: ThemePreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-
-        val db = ExpenseDatabase.getDatabase(this)
-
-        val accountDao = db.accountDao()
-        val expenseDao = db.expenseDao()
-        val tripDao = db.tripDao()
-
-        val expenseRepository = ExpenseRepository(accountDao = accountDao, expenseDao = expenseDao)
-        val tripRepository = TripRepository(tripDao = tripDao)
-
-
-        val expenseViewModelFactory = ExpenseViewModelFactory(repository = expenseRepository)
-        val tripViewModelFactory = TripViewModelFactory(repository = tripRepository, context = this)
-
         themePreferences = ThemePreferences(this)
-
         enableEdgeToEdge()
+
         setContent {
             val isDarkMode by themePreferences.isDarkModeEnabled.collectAsState(initial = false)
-            var isLoggedIn by remember { mutableStateOf(FirebaseAuth.getInstance().currentUser != null) }
+            var currentUserId by remember {
+                mutableStateOf(FirebaseAuth.getInstance().currentUser?.uid)
+            }
+
+            DisposableEffect(Unit) {
+                val listener = FirebaseAuth.AuthStateListener { auth ->
+                    val newUid = auth.currentUser?.uid
+                    if (newUid != currentUserId) {
+                        ExpenseDatabase.clearInstance()
+                        currentUserId = newUid
+                    }
+                }
+                FirebaseAuth.getInstance().addAuthStateListener(listener)
+                onDispose { FirebaseAuth.getInstance().removeAuthStateListener(listener) }
+            }
 
             ExpenseCalculatorTheme(darkTheme = isDarkMode) {
-                if (isLoggedIn) {
-                    val expenseViewModel: ExpenseViewModel = viewModel(factory = expenseViewModelFactory)
-                    val tripViewModel: TripViewModel = viewModel(factory = tripViewModelFactory)
+                if (currentUserId != null) {
+                    val db = remember(currentUserId) {
+                        ExpenseDatabase.getDatabase(this@MainActivity, currentUserId!!)
+                    }
+                    val expenseViewModelFactory = remember(currentUserId) {
+                        ExpenseViewModelFactory(ExpenseRepository(db.accountDao(), db.expenseDao()))
+                    }
+                    val tripViewModelFactory = remember(currentUserId) {
+                        TripViewModelFactory(TripRepository(db.tripDao()), this@MainActivity)
+                    }
+                    val expenseViewModel: ExpenseViewModel = viewModel(
+                        factory = expenseViewModelFactory,
+                        key = currentUserId
+                    )
+                    val tripViewModel: TripViewModel = viewModel(
+                        factory = tripViewModelFactory,
+                        key = currentUserId
+                    )
                     val navController = rememberNavController()
                     NavGraph(
                         navController = navController,
@@ -60,7 +73,9 @@ class MainActivity : ComponentActivity() {
                         themePreferences = themePreferences
                     )
                 } else {
-                    AuthNavigator(onLoginSuccess = { isLoggedIn = true })
+                    AuthNavigator(onLoginSuccess = {
+                        currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+                    })
                 }
             }
         }

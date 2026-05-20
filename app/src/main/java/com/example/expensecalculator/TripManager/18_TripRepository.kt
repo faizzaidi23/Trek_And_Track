@@ -1,110 +1,125 @@
 package com.example.expensecalculator.TripManager
 
-import com.example.expensecalculator.tripData.*
+import android.util.Log
+import com.example.expensecalculator.tripData.CategoryWithExpenses
+import com.example.expensecalculator.tripData.CompleteTripDetails
+import com.example.expensecalculator.tripData.ExpenseCategory
+import com.example.expensecalculator.tripData.ExpenseSplit
+import com.example.expensecalculator.tripData.ExpenseWithSplits
+import com.example.expensecalculator.tripData.SettlementPayment
+import com.example.expensecalculator.tripData.Trip
+import com.example.expensecalculator.tripData.TripDao
+import com.example.expensecalculator.tripData.TripExpense
+import com.example.expensecalculator.tripData.TripParticipant
+import com.example.expensecalculator.tripData.TripPhoto
 import kotlinx.coroutines.flow.Flow
 
 class TripRepository(private val tripDao: TripDao) {
 
-    fun getAllTrips(): Flow<List<Trip>> = tripDao.showAllTrips()
+    private val firestoreSync = FirestoreTripSync()
+
+    fun getAllTrips(userId: String): Flow<List<Trip>> = tripDao.showAllTrips(userId)
+
+    suspend fun addTripWithParticipants(
+        title: String,
+        participantNames: List<String>,
+        tripIconUri: String? = null,
+        currency: String = "INR",
+        createdBy: String = ""
+    ) {
+        Log.d("TripRepo", "Creating trip with createdBy: $createdBy")
+        // 1. Save to Room first
+        val newTrip = Trip(title = title, tripIconUri = tripIconUri, currency = currency, createdBy = createdBy)
+        val tripId = tripDao.addTrip(newTrip)
+        val participants = participantNames.map { name ->
+            TripParticipant(tripId = tripId.toInt(), participantName = name)
+        }
+        tripDao.addParticipants(participants)
+
+        // 2. Sync to Firestore
+        try {
+            val firestoreId = firestoreSync.syncTripToFirestore(
+                newTrip.copy(id = tripId.toInt()),
+                participants
+            )
+            // 3. Save firestoreId back to Room
+            tripDao.updateFirestoreId(tripId.toInt(), firestoreId)
+        } catch (_: Exception) {
+            // Firestore sync failed but Room has data — offline support works
+        }
+    }
 
     suspend fun deleteTripCompletely(trip: Trip) {
         tripDao.deleteTripCompletely(trip)
+        try {
+            trip.firestoreId?.let { firestoreSync.deleteTripFromFirestore(it) }
+        } catch (_: Exception) { }
     }
 
-    suspend fun addTripWithParticipants(title: String, participantNames: List<String>, tripIconUri: String? = null, currency: String = "INR") {
-        val newTrip = Trip(title = title, tripIconUri = tripIconUri, currency = currency)
-        tripDao.addTripWithParticipants(newTrip, participantNames)
+    suspend fun addExpenseWithSplits(expense: TripExpense, splits: List<ExpenseSplit>) {
+        tripDao.addExpenseWithSplits(expense, splits)
+        try {
+            val trip = tripDao.getCompleteTripDetails(expense.tripId)
+            trip?.trip?.firestoreId?.let { firestoreId ->
+                firestoreSync.syncExpenseToFirestore(firestoreId, expense, splits)
+            }
+        } catch (_: Exception) { }
     }
 
     suspend fun updateTripWithParticipants(tripId: Int, title: String, participantNames: List<String>, tripIconUri: String? = null, currency: String = "INR") {
-        // First, get the existing trip to preserve other details like days/budget
         val existingTrip = getCompleteTripDetails(tripId)?.trip ?: Trip(id = tripId, title = title, currency = currency)
         val tripToUpdate = existingTrip.copy(title = title, tripIconUri = tripIconUri ?: existingTrip.tripIconUri, currency = currency)
         tripDao.updateTripWithParticipants(tripToUpdate, participantNames)
+        try {
+            val participants = tripDao.getCompleteTripDetails(tripId)?.participants ?: emptyList()
+            existingTrip.firestoreId?.let {
+                firestoreSync.syncTripToFirestore(tripToUpdate, participants)
+            }
+        } catch (_: Exception) { }
     }
 
-    suspend fun getCompleteTripDetails(tripId: Int): CompleteTripDetails? {
-        return tripDao.getCompleteTripDetails(tripId)
-    }
-
-    fun getCompleteTripDetailsFlow(tripId: Int): Flow<CompleteTripDetails?> {
-        return tripDao.getCompleteTripDetailsFlow(tripId)
-    }
-
-    //  Update trip icon
+    suspend fun getCompleteTripDetails(tripId: Int): CompleteTripDetails? = tripDao.getCompleteTripDetails(tripId)
+    fun getCompleteTripDetailsFlow(tripId: Int): Flow<CompleteTripDetails?> = tripDao.getCompleteTripDetailsFlow(tripId)
     suspend fun updateTripIcon(tripId: Int, iconUri: String) {
         val existingTrip = getCompleteTripDetails(tripId)?.trip ?: return
-        val updatedTrip = existingTrip.copy(tripIconUri = iconUri)
-        tripDao.updateTrip(updatedTrip)
+        tripDao.updateTrip(existingTrip.copy(tripIconUri = iconUri))
     }
+    fun getExpenseWithSplitsById(expenseId: Int): Flow<ExpenseWithSplits?> = tripDao.getExpenseWithSplitsByIdFlow(expenseId)
 
-    // This now calls the new transaction in the DAO
-    suspend fun addExpenseWithSplits(expense: TripExpense, splits: List<ExpenseSplit>) {
-        tripDao.addExpenseWithSplits(expense, splits)
-    }
 
-    suspend fun deleteExpense(expense: TripExpense) {
-        tripDao.deleteExpense(expense)
-    }
+    suspend fun deleteExpense(expense: TripExpense) = tripDao.deleteExpense(expense)
 
-    // Get a single expense with its splits
-    fun getExpenseWithSplitsById(expenseId: Int): Flow<ExpenseWithSplits?> {
-        return tripDao.getExpenseWithSplitsByIdFlow(expenseId)
-    }
 
-    //PHOTO OPERATIONS
-    suspend fun addPhoto(photo: TripPhoto): Long {
-        return tripDao.addPhoto(photo)
-    }
+    suspend fun addPhoto(photo: TripPhoto): Long = tripDao.addPhoto(photo)
 
-    suspend fun deletePhoto(photo: TripPhoto) {
-        tripDao.deletePhoto(photo)
-    }
 
-    fun getPhotosByTripId(tripId: Int): Flow<List<TripPhoto>> {
-        return tripDao.getPhotosByTripIdFlow(tripId)
-    }
+    suspend fun deletePhoto(photo: TripPhoto) = tripDao.deletePhoto(photo)
 
-    // SETTLEMENT PAYMENT OPERATIONS
-    suspend fun addSettlementPayment(payment: SettlementPayment): Long {
-        return tripDao.addSettlementPayment(payment)
-    }
 
-    suspend fun deleteSettlementPayment(payment: SettlementPayment) {
-        tripDao.deleteSettlementPayment(payment)
-    }
+    suspend fun addSettlementPayment(payment: SettlementPayment): Long = tripDao.addSettlementPayment(payment)
 
-    fun getSettlementPaymentsByTripId(tripId: Int): Flow<List<SettlementPayment>> {
-        return tripDao.getSettlementPaymentsByTripIdFlow(tripId)
-    }
 
-    // CURRENCY OPERATIONS
-    suspend fun updateTripCurrency(tripId: Int, currency: String) {
-        tripDao.updateTripCurrency(tripId, currency)
-    }
+    suspend fun deleteSettlementPayment(payment: SettlementPayment) = tripDao.deleteSettlementPayment(payment)
 
-    // CATEGORY OPERATIONS
-    suspend fun addCategory(category: ExpenseCategory): Long {
-        return tripDao.addCategory(category)
-    }
 
-    suspend fun deleteCategory(category: ExpenseCategory) {
-        tripDao.deleteCategory(category)
-    }
+    fun getSettlementPaymentsByTripId(tripId: Int): Flow<List<SettlementPayment>> = tripDao.getSettlementPaymentsByTripIdFlow(tripId)
 
-    fun getCategoriesByTripId(tripId: Int): Flow<List<ExpenseCategory>> {
-        return tripDao.getCategoriesByTripIdFlow(tripId)
-    }
 
-    fun getCategoriesWithExpenses(tripId: Int): Flow<List<CategoryWithExpenses>> {
-        return tripDao.getCategoriesWithExpensesFlow(tripId)
-    }
+    suspend fun updateTripCurrency(tripId: Int, currency: String) = tripDao.updateTripCurrency(tripId, currency)
 
-    suspend fun getCategoryById(categoryId: Int): ExpenseCategory? {
-        return tripDao.getCategoryById(categoryId)
-    }
 
-    suspend fun createDefaultCategories(tripId: Int) {
-        tripDao.createDefaultCategories(tripId)
-    }
+    suspend fun addCategory(category: ExpenseCategory): Long = tripDao.addCategory(category)
+
+
+
+    suspend fun deleteCategory(category: ExpenseCategory) = tripDao.deleteCategory(category)
+
+
+    fun getCategoriesWithExpenses(tripId: Int): Flow<List<CategoryWithExpenses>> = tripDao.getCategoriesWithExpensesFlow(tripId)
+
+
+    suspend fun createDefaultCategories(tripId: Int) = tripDao.createDefaultCategories(tripId)
+
+
+
 }

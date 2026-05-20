@@ -1,5 +1,6 @@
 package com.example.expensecalculator.TripManager
 
+import android.R.attr.onClick
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,9 +25,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.expensecalculator.Data.ExpenseDatabase
 import com.example.expensecalculator.ThemePreferences
 import com.example.expensecalculator.tripData.Trip
 import com.example.expensecalculator.ui.theme.IconBackground
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -98,15 +101,13 @@ fun TripMainScreen(
                             DropdownMenuItem(
                                 text = { Text("Logout") },
                                 onClick = {
-                                    scope.launch {
-                                        com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
-                                        // restart activity
-                                        (context as android.app.Activity).recreate()
-                                    }
+                                    ExpenseDatabase.clearInstance()
+                                    FirebaseAuth.getInstance().signOut()
+                                    (context as android.app.Activity).recreate()
                                     menuExpanded = false
                                 },
                                 leadingIcon = {
-                                    Icon(Icons.AutoMirrored.Filled.Logout, "Logout", tint = MaterialTheme.colorScheme.onSurface)
+                                    Icon(Icons.Default.Logout, "Logout", tint = MaterialTheme.colorScheme.onSurface)
                                 }
                             )
                         }

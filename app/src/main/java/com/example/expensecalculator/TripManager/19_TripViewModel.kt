@@ -3,6 +3,7 @@ package com.example.expensecalculator.TripManager
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -20,6 +21,7 @@ import com.example.expensecalculator.tripData.TripExpense
 import com.example.expensecalculator.tripData.TripParticipant
 import com.example.expensecalculator.tripData.TripPhoto
 import com.example.expensecalculator.util.CurrencyUtils
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -53,7 +55,9 @@ class TripViewModel(
     private val _isLoadingExchangeRate = MutableStateFlow(false)
     val isLoadingExchangeRate: StateFlow<Boolean> = _isLoadingExchangeRate.asStateFlow()
 
-    val allTrips = repository.getAllTrips()
+    val allTrips = repository.getAllTrips(
+        FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    )
 
     private val _completeTripDetails = MutableStateFlow<CompleteTripDetails?>(null)
     val completeTripDetails: StateFlow<CompleteTripDetails?> = _completeTripDetails.asStateFlow()
@@ -124,7 +128,7 @@ class TripViewModel(
     fun saveTrip(tripId: Int?, title: String, participantNames: List<String>, tripIconUri: String? = null, currency: String = "INR") {
         viewModelScope.launch {
             if (tripId == null || tripId == -1) {
-                repository.addTripWithParticipants(title, participantNames, tripIconUri, currency)
+                repository.addTripWithParticipants(title, participantNames, tripIconUri, currency, FirebaseAuth.getInstance().currentUser?.uid ?: "")
             } else {
                 repository.updateTripWithParticipants(tripId, title, participantNames, tripIconUri, currency)
             }
@@ -367,6 +371,12 @@ class TripViewModel(
             }
             onComplete(uri)
         }
+    }
+
+
+
+    init {
+        Log.d("TripViewModel", "UID for trips: ${FirebaseAuth.getInstance().currentUser?.uid}")
     }
 }
 
