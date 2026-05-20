@@ -49,6 +49,8 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel) {
     var confirmPasswordVisible by remember { mutableStateOf(false) }
     var confirmPassword by remember { mutableStateOf("") } // Local state for confirm password
 
+    var name by remember{mutableStateOf("")}
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -114,6 +116,25 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel) {
                         .padding(horizontal = 31.dp, vertical = 49.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text("Full Name", color = HintGray) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = PrimaryBlue,
+                            unfocusedBorderColor = LightGray,
+                            cursorColor = PrimaryBlue,
+                            unfocusedContainerColor = Color(0xFFF0F0F0),
+                            focusedContainerColor = Color(0xFFF0F0F0),
+                        ),
+                        singleLine = true
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+
+
                     // Email Text Field
                     OutlinedTextField(
                         value = viewModel.email,
@@ -195,6 +216,7 @@ fun RegisterScreen(navController: NavController, viewModel: AuthViewModel) {
                         onClick = {
                             // TODO: Add validation -> if (viewModel.password == confirmPassword)
                             viewModel.register(
+                                name=name,
                                 onSuccess = { navController.popBackStack() },
                                 onError = { Toast.makeText(context, it, Toast.LENGTH_LONG).show() }
                             )

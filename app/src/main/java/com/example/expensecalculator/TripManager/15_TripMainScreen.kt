@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,7 @@ fun TripMainScreen(
     val isDarkMode by themePreferences.isDarkModeEnabled.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     var menuExpanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -91,6 +93,20 @@ fun TripMainScreen(
                                         "Toggle Theme",
                                         tint = MaterialTheme.colorScheme.onSurface
                                     )
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Logout") },
+                                onClick = {
+                                    scope.launch {
+                                        com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+                                        // restart activity
+                                        (context as android.app.Activity).recreate()
+                                    }
+                                    menuExpanded = false
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.AutoMirrored.Filled.Logout, "Logout", tint = MaterialTheme.colorScheme.onSurface)
                                 }
                             )
                         }

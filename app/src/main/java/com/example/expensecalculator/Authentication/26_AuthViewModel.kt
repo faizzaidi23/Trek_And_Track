@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -22,6 +23,10 @@ class AuthViewModel : ViewModel() {
         private set
 
     private val auth = FirebaseAuth.getInstance()
+
+
+    var name by mutableStateOf("")
+    fun onNameChange(v:String){name=v}
 
     val isLoggedIn get() = auth.currentUser != null
 
@@ -44,18 +49,24 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
-
-    fun register(onSuccess: () -> Unit, onError: (String) -> Unit) {
+    fun register(name: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             isLoading = true
-            errorMessage = null
             try {
-                auth.createUserWithEmailAndPassword(email, password).await()
+                val result = auth.createUserWithEmailAndPassword(email, password).await()
+                val uid = result.user?.uid ?: return@launch
+
+                // Update Firebase display name
+                val profileUpdate = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+                    .setDisplayName(name)
+                    .build()
+                result.user?.updateProfile(profileUpdate)?.await()
+
+                // Save to Firestore
+                saveUserProfile(uid, name, email)
                 onSuccess()
             } catch (e: Exception) {
-                val msg = "Registration failed: ${e.message}"
-                errorMessage = msg
-                onError(msg)
+                onError("Registration failed: ${e.message}")
             } finally {
                 isLoading = false
             }
@@ -81,7 +92,17 @@ class AuthViewModel : ViewModel() {
             isLoading = true
             try {
                 val credential = GoogleAuthProvider.getCredential(idToken, null)
-                auth.signInWithCredential(credential).await()
+                val result = auth.signInWithCredential(credential).await()
+                val user = result.user ?: return@launch
+
+                // Save profile only if new user
+                if (result.additionalUserInfo?.isNewUser == true) {
+                    saveUserProfile(
+                        uid = user.uid,
+                        name = user.displayName ?: "User",
+                        email = user.email ?: ""
+                    )
+                }
                 onSuccess()
             } catch (e: Exception) {
                 onError("Google sign-in failed: ${e.message}")
@@ -103,4 +124,14 @@ class AuthViewModel : ViewModel() {
                 .requestEmail()
                 .build()
         )
+
+    private suspend fun saveUserProfile(uid: String, name: String, email: String) {
+        val db = FirebaseFirestore.getInstance()
+        val user = hashMapOf(
+            "uid" to uid,
+            "name" to name,
+            "email" to email
+        )
+        db.collection("users").document(uid).set(user).await()
+    }
 }
